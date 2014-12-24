@@ -12,6 +12,7 @@ shinyUI(pageWithSidebar(
     numericInput('alpha', 'alpha (>0)', 1, 0),
     numericInput('beta',  'beta (>0)',  1, 0),
     hr(),
+    helpText('Sufficient statistics'),
     numericInput('n', 'Total attempts:', 10, 0),
     numericInput('y', 'Total successes:',  3, 0)
   ),
