@@ -13,7 +13,7 @@ shinyUI(pageWithSidebar(
     numericInput('beta',  'beta (>0)',  1, 0),
     hr(),
     numericInput('n', 'Total attempts:', 10, 0),
-    numericInput('y', 'Total successes:',  7, 0)
+    numericInput('y', 'Total successes:',  3, 0)
   ),
     
   mainPanel(
