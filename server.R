@@ -6,14 +6,19 @@ shinyServer(function(input,output) {
     ymax = dbeta(mode, input$alpha+input$y, input$beta+input$n-input$y)
   
     curve(dbeta(x, input$alpha, input$beta), 
+          from = 0, 
+          to = 1, 
+          n = 1001, 
           col="red", lwd=2, 
           ylim=c(0,ymax), 
           xlab = expression(theta),
           ylab = '',
-          main = 'Prior + Likelihood = Posterior')
+          main = 'Prior x Likelihood = Posterior')
     curve(dbeta(x, input$y, input$n-input$y), 
+          n = 1001, 
           col="blue", lwd=2, add=TRUE)
-    curve(dbeta(x, input$alpha+input$y, input$beta+input$n-input$y), 
+    curve(dbeta(x, input$alpha+input$y, input$beta+input$n-input$y),
+          n = 1001, 
           col="purple", lwd=2, add=TRUE)
     legend("topright", 
            c("Prior","Likelihood","Posterior"), 
