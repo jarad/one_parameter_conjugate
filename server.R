@@ -126,4 +126,46 @@ shinyServer(function(input,output,session) {
     ggplot(norm_v_data(), aes(x=x,y=y,color=Distribution)) + geom_line()
   })
   
+  
+  ######################################################################
+  # Poisson (unknown mean)
+  ######################################################################
+  
+  pois_m_xx = reactive({ seq(input$pois_m_min, input$pois_m_max, length=1001) })
+  
+  pois_m_prior = reactive({
+    x = pois_m_xx()
+    data.frame("Distribution" = "prior",
+               x = x,
+               y = dgamma(x, input$pois_m_a, input$pois_m_b))
+  })
+  
+  pois_m_like = reactive({
+    x = pois_m_xx()
+    data.frame("Distribution" = "likelihood",
+               x = x,
+               y = dgamma(x, 
+                          input$pois_m_n*input$pois_m_ybar, 
+                          input$pois_m_n))
+  })  
+  
+  pois_m_post = reactive({
+    x = pois_m_xx()
+    data.frame("Distribution" = "posterior",
+               x = x,
+               y = dinvgamma(x, 
+                             input$pois_m_a+input$pois_m_n*input$pois_m_ybar, 
+                             input$pois_m_b+input$pois_m_n))
+  })
+  
+  pois_m_data = reactive({
+    rbind(pois_m_prior(),
+          pois_m_like(),
+          pois_m_post())
+  })
+  
+  output$pois_m_plot = renderPlot({
+    ggplot(pois_m_data(), aes(x=x,y=y,color=Distribution)) + geom_line()
+  })
+  
 })

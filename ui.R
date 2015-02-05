@@ -64,5 +64,26 @@ shinyUI(navbarPage("Model:",
         mainPanel(plotOutput('norm_v_plot'))
       )
     )
+  ),
+  navbarMenu("Poisson",
+    tabPanel("unknown mean",
+      sidebarLayout(
+        sidebarPanel(
+          numericInput('pois_m_sigma', 'Data standard deviation', 1, 0),
+          helpText('Prior: Ga(a,b)'),
+          numericInput('pois_m_a', 'a', 1, 0),
+          numericInput('pois_m_b', 'b', 1, 0),
+          hr(),
+          helpText('Data'),
+          numericInput('pois_m_n', 'Number of observations:', 1, 0),
+          numericInput('pois_m_ybar', 'Sample average:',  1, 0),
+          hr(),
+          helpText('Plot x limits'),
+          numericInput('pois_m_min', 'min', 0),
+          numericInput('pois_m_max', 'max', 3)
+        ),
+        mainPanel(plotOutput('pois_m_plot'))
+      )
+    )
   )
 ))
