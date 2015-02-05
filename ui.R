@@ -32,6 +32,29 @@ shinyUI(navbarPage("Model:",
     tabPanel("unknown n", includeMarkdown("under_construction.md"))
   ),
   
+  ####################################################
+  # Poisson
+  ####################################################
+  navbarMenu("Poisson",
+    tabPanel("unknown mean",
+      sidebarLayout(
+        sidebarPanel(
+          helpText('Prior: Ga(a,b)'),
+          numericInput('pois_m_a', 'a', 1, 0),
+          numericInput('pois_m_b', 'b', 1, 0),
+          hr(),
+          helpText('Data'),
+          numericInput('pois_m_n', 'Number of observations:', 1, 0),
+          numericInput('pois_m_ybar', 'Sample average:',  2, 0),
+          hr(),
+          helpText('Plot x limits'),
+          numericInput('pois_m_min', 'min', 0),
+          numericInput('pois_m_max', 'max', 3)
+        ),
+        mainPanel(plotOutput('pois_m_plot'))
+      )
+    )
+  ),
   
   ####################################################
   # Normal
@@ -76,29 +99,6 @@ shinyUI(navbarPage("Model:",
     )
   ),
   
-  ####################################################
-  # Poisson
-  ####################################################
-  navbarMenu("Poisson",
-    tabPanel("unknown mean",
-      sidebarLayout(
-        sidebarPanel(
-          helpText('Prior: Ga(a,b)'),
-          numericInput('pois_m_a', 'a', 1, 0),
-          numericInput('pois_m_b', 'b', 1, 0),
-          hr(),
-          helpText('Data'),
-          numericInput('pois_m_n', 'Number of observations:', 1, 0),
-          numericInput('pois_m_ybar', 'Sample average:',  2, 0),
-          hr(),
-          helpText('Plot x limits'),
-          numericInput('pois_m_min', 'min', 0),
-          numericInput('pois_m_max', 'max', 3)
-        ),
-        mainPanel(plotOutput('pois_m_plot'))
-      )
-    )
-  ),
   ####################################################
   # Exponential
   ####################################################
