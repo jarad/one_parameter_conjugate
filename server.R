@@ -168,4 +168,45 @@ shinyServer(function(input,output,session) {
     ggplot(pois_m_data(), aes(x=x,y=y,color=Distribution)) + geom_line()
   })
   
+  ######################################################################
+  # Exponential (unknown mean)
+  ######################################################################
+  
+  exp_m_xx = reactive({ seq(input$exp_m_min, input$exp_m_max, length=1001) })
+  
+  exp_m_prior = reactive({
+    x = exp_m_xx()
+    data.frame("Distribution" = "prior",
+               x = x,
+               y = dgamma(x, input$exp_m_a, input$exp_m_b))
+  })
+  
+  exp_m_like = reactive({
+    x = exp_m_xx()
+    data.frame("Distribution" = "likelihood",
+               x = x,
+               y = dgamma(x, 
+                          input$exp_m_n, 
+                          input$exp_m_n*input$exp_m_ybar))
+  })  
+  
+  exp_m_post = reactive({
+    x = exp_m_xx()
+    data.frame("Distribution" = "posterior",
+               x = x,
+               y = dinvgamma(x, 
+                             input$exp_m_a+input$exp_m_n, 
+                             input$exp_m_b+input$exp_m_n*input$exp_m_ybar))
+  })
+  
+  exp_m_data = reactive({
+    rbind(exp_m_prior(),
+          exp_m_like(),
+          exp_m_post())
+  })
+  
+  output$exp_m_plot = renderPlot({
+    ggplot(exp_m_data(), aes(x=x,y=y,color=Distribution)) + geom_line()
+  })
+  
 })
