@@ -24,7 +24,7 @@ shinyUI(navbarPage("Model:",
         )
       )
     ),
-    tabPanel("unknown n", includeMarkdown("help.md"))
+    tabPanel("unknown n", includeMarkdown("under_construction.md"))
   ),
   navbarMenu("Normal",
     tabPanel("unknown mean",
