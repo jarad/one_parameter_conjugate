@@ -1,27 +1,129 @@
 library(shiny)
+library(ggplot2)
 
-shinyServer(function(input,output) {
-  output$plot <- renderPlot({
-    mode = (input$alpha+input$y-1)/(input$alpha+input$beta+input$n-2)
-    ymax = dbeta(mode, input$alpha+input$y, input$beta+input$n-input$y)
+source("dinvgamma.R")
+
+shinyServer(function(input,output,session) {
   
-    curve(dbeta(x, input$alpha, input$beta), 
-          from = 0, 
-          to = 1, 
-          n = 1001, 
-          col="red", lwd=2, 
-          ylim=c(0,ymax), 
-          xlab = expression(theta),
-          ylab = '',
-          main = 'Prior x Likelihood = Posterior')
-    curve(dbeta(x, input$y, input$n-input$y), 
-          n = 1001, 
-          col="blue", lwd=2, add=TRUE)
-    curve(dbeta(x, input$alpha+input$y, input$beta+input$n-input$y),
-          n = 1001, 
-          col="purple", lwd=2, add=TRUE)
-    legend("topright", 
-           c("Prior","Likelihood","Posterior"), 
-           col=c("red","blue","purple"), lwd=2)
+  ######################################################################
+  # Binomial (unknown p)
+  ######################################################################
+  
+  bin_p_xx = reactive({ seq(input$bin_p_min, input$bin_p_max, length=1001) })
+  
+  bin_p_prior = reactive({
+    x = bin_p_xx()
+    data.frame("Distribution" = "prior",
+               x = x,
+               y = dbeta(x, input$bin_p_a, input$bin_p_b))
   })
+  
+  bin_p_like = reactive({
+    x = bin_p_xx()
+    data.frame("Distribution" = "likelihood",
+               x = x,
+               y = dbeta(x, input$bin_p_y, input$bin_p_n-input$bin_p_y))
+  })  
+  
+  bin_p_post = reactive({
+    x = bin_p_xx()
+    data.frame("Distribution" = "posterior",
+               x = x,
+               y = dbeta(x, 
+                         input$bin_p_a+input$bin_p_y, 
+                         input$bin_p_b+input$bin_p_n-input$bin_p_y))
+  })
+  
+  bin_p_data = reactive({
+    rbind(bin_p_prior(),
+          bin_p_like(),
+          bin_p_post())
+  })
+  
+  output$bin_p_plot = renderPlot({
+    ggplot(bin_p_data(), aes(x=x,y=y,color=Distribution)) + geom_line()
+  })
+  
+  
+  ######################################################################
+  # Normal (unknown mean)
+  ######################################################################
+  
+  norm_m_xx = reactive({ seq(input$norm_m_min, input$norm_m_max, length=1001) })
+  
+  norm_m_prior = reactive({
+    x = norm_m_xx()
+    data.frame("Distribution" = "prior",
+               x = x,
+               y = dnorm(x, input$norm_m_m, input$norm_m_s))
+  })
+  
+  norm_m_like = reactive({
+    x = norm_m_xx()
+    data.frame("Distribution" = "likelihood",
+               x = x,
+               y = dnorm(x, input$norm_m_ybar, input$norm_m_sigma/sqrt(input$norm_m_n)))
+  })  
+  
+  norm_m_post = reactive({
+    x = norm_m_xx()
+    vr = 1/input$norm_m_s^2 + input$norm_m_n/input$norm_m_sigma^2
+    mn = vr*(input$norm_m_m/input$norm_m_s^2 + input$norm_m_n*input$norm_m_ybar/input$norm_m_sigma^2)
+    data.frame("Distribution" = "posterior",
+               x = x,
+               y = dnorm(x, mn, sqrt(vr)))
+  })
+  
+  norm_m_data = reactive({
+    rbind(norm_m_prior(),
+          norm_m_like(),
+          norm_m_post())
+  })
+  
+  output$norm_m_plot = renderPlot({
+    ggplot(norm_m_data(), aes(x=x,y=y,color=Distribution)) + geom_line()
+  })
+  
+  
+  ######################################################################
+  # Normal (unknown variance)
+  ######################################################################
+  
+  norm_v_xx = reactive({ seq(input$norm_v_min, input$norm_v_max, length=1001) })
+  
+  norm_v_prior = reactive({
+    x = norm_v_xx()
+    data.frame("Distribution" = "prior",
+               x = x,
+               y = dinvgamma(x, input$norm_v_a, input$norm_v_b))
+  })
+  
+  norm_v_like = reactive({
+    x = norm_v_xx()
+    data.frame("Distribution" = "likelihood",
+               x = x,
+               y = dinvgamma(x, 
+                             input$norm_v_n/2, 
+                             input$norm_v_n*input$norm_v_s^2/2))
+  })  
+  
+  norm_v_post = reactive({
+    x = norm_v_xx()
+    data.frame("Distribution" = "posterior",
+               x = x,
+               y = dinvgamma(x, 
+                             input$norm_v_a+input$norm_v_n/2, 
+                             input$norm_v_b+input$norm_v_n*input$norm_v_s/2))
+  })
+  
+  norm_v_data = reactive({
+    rbind(norm_v_prior(),
+          norm_v_like(),
+          norm_v_post())
+  })
+  
+  output$norm_v_plot = renderPlot({
+    ggplot(norm_v_data(), aes(x=x,y=y,color=Distribution)) + geom_line()
+  })
+  
 })

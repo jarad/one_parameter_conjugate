@@ -5,7 +5,7 @@ dinvgamma = function (x, shape, scale = 1, log=FALSE)
   }
   alpha <- shape
   beta <- scale
-  log.density <- alpha * log(beta) - lgamma(alpha) - (alpha + 
-                                                        1) * log(x) - (beta/x)
-  return(ifelse(log, log.density, exp(log.density)))
+  density <- alpha * log(beta) - lgamma(alpha) - (alpha + 1) * log(x) - (beta/x)
+  if (!log) density = exp(density)
+  return(density)
 }
