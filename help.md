@@ -1,2 +1,1 @@
-
-# Under construction.
+This shiny app allows the use to understand the relationship between prior, likelihood, and posterior in a variety of one parameter conjugate Bayesian models. To get started, click on a model in the navigation bar above.
