@@ -103,24 +103,42 @@ shinyUI(navbarPage("Model:",
   # Exponential
   ####################################################
   navbarMenu("Exponential",
-    tabPanel("unknown rate",
-      sidebarLayout(
-        sidebarPanel(
-          helpText('Prior: Ga(a,b)'),
-          numericInput('exp_m_a', 'a', 1, 0),
-          numericInput('exp_m_b', 'b', 1, 0),
-          hr(),
-          helpText('Data'),
-          numericInput('exp_m_n', 'Number of observations:', 2, 0),
-          numericInput('exp_m_ybar', 'Sample average:',  1, 0),
-          hr(),
-          helpText('Plot x limits'),
-          numericInput('exp_m_min', 'min', 0),
-          numericInput('exp_m_max', 'max', 3)
-        ),
-        mainPanel(plotOutput('exp_m_plot'))
-      )
-    )
+             tabPanel("unknown mean",
+                      sidebarLayout(
+                        sidebarPanel(
+                          helpText('Prior: IG(a,b)'),
+                          numericInput('exp_m_a', 'a', 1, 0),
+                          numericInput('exp_m_b', 'b', 1, 0),
+                          hr(),
+                          helpText('Data'),
+                          numericInput('exp_m_n', 'Number of observations:', 2, 0),
+                          numericInput('exp_m_ybar', 'Sample average:',  1, 0),
+                          hr(),
+                          helpText('Plot x limits'),
+                          numericInput('exp_m_min', 'min', 0),
+                          numericInput('exp_m_max', 'max', 3)
+                        ),
+                        mainPanel(plotOutput('exp_m_plot'))
+                      )
+             ),
+             tabPanel("unknown rate",
+                      sidebarLayout(
+                        sidebarPanel(
+                          helpText('Prior: Ga(a,b)'),
+                          numericInput('exp_r_a', 'a', 1, 0),
+                          numericInput('exp_r_b', 'b', 1, 0),
+                          hr(),
+                          helpText('Data'),
+                          numericInput('exp_r_n', 'Number of observations:', 2, 0),
+                          numericInput('exp_r_ybar', 'Sample average:',  1, 0),
+                          hr(),
+                          helpText('Plot x limits'),
+                          numericInput('exp_r_min', 'min', 0),
+                          numericInput('exp_r_max', 'max', 3)
+                        ),
+                        mainPanel(plotOutput('exp_r_plot'))
+                      )
+             )
   )
   
 ))

@@ -178,16 +178,16 @@ shinyServer(function(input,output,session) {
     x = exp_m_xx()
     data.frame("Distribution" = "prior",
                x = x,
-               y = dgamma(x, input$exp_m_a, input$exp_m_b))
+               y = dinvgamma(x, input$exp_m_a, input$exp_m_b))
   })
   
   exp_m_like = reactive({
     x = exp_m_xx()
     data.frame("Distribution" = "likelihood",
                x = x,
-               y = dgamma(x, 
-                          input$exp_m_n, 
-                          input$exp_m_n*input$exp_m_ybar))
+               y = dinvgamma(x, 
+                             input$exp_m_n, 
+                             input$exp_m_n*input$exp_m_ybar))
   })  
   
   exp_m_post = reactive({
@@ -207,6 +207,49 @@ shinyServer(function(input,output,session) {
   
   output$exp_m_plot = renderPlot({
     ggplot(exp_m_data(), aes(x=x,y=y,color=Distribution)) + geom_line()
+  })
+  
+  
+  
+  ######################################################################
+  # Exponential (unknown rate)
+  ######################################################################
+  
+  exp_r_xx = reactive({ seq(input$exp_r_min, input$exp_r_max, length=1001) })
+  
+  exp_r_prior = reactive({
+    x = exp_r_xx()
+    data.frame("Distribution" = "prior",
+               x = x,
+               y = dgamma(x, input$exp_r_a, input$exp_r_b))
+  })
+  
+  exp_r_like = reactive({
+    x = exp_r_xx()
+    data.frame("Distribution" = "likelihood",
+               x = x,
+               y = dgamma(x, 
+                             input$exp_r_n, 
+                             input$exp_r_n*input$exp_r_ybar))
+  })  
+  
+  exp_r_post = reactive({
+    x = exp_r_xx()
+    data.frame("Distribution" = "posterior",
+               x = x,
+               y = dgamma(x, 
+                             input$exp_r_a+input$exp_r_n, 
+                             input$exp_r_b+input$exp_r_n*input$exp_r_ybar))
+  })
+  
+  exp_r_data = reactive({
+    rbind(exp_r_prior(),
+          exp_r_like(),
+          exp_r_post())
+  })
+  
+  output$exp_r_plot = renderPlot({
+    ggplot(exp_r_data(), aes(x=x,y=y,color=Distribution)) + geom_line()
   })
   
 })
