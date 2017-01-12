@@ -3,6 +3,8 @@ library(ggplot2)
 
 source("dinvgamma.R")
 
+
+
 shinyServer(function(input,output,session) {
   
   ######################################################################
@@ -41,7 +43,9 @@ shinyServer(function(input,output,session) {
   })
   
   output$bin_p_plot = renderPlot({
-    ggplot(bin_p_data(), aes(x=x,y=y,color=Distribution)) + geom_line()
+    ggplot(bin_p_data(), aes(x=x,y=y,color=Distribution,linetype=Distribution)) + 
+      geom_line() + 
+      theme_bw()
   })
   
   
@@ -81,7 +85,9 @@ shinyServer(function(input,output,session) {
   })
   
   output$norm_m_plot = renderPlot({
-    ggplot(norm_m_data(), aes(x=x,y=y,color=Distribution)) + geom_line()
+    ggplot(norm_m_data(), aes(x=x,y=y,color=Distribution,linetype=Distribution)) + 
+      geom_line() + 
+      theme_bw()
   })
   
   
@@ -123,7 +129,9 @@ shinyServer(function(input,output,session) {
   })
   
   output$norm_v_plot = renderPlot({
-    ggplot(norm_v_data(), aes(x=x,y=y,color=Distribution)) + geom_line()
+    ggplot(norm_v_data(), aes(x=x,y=y,color=Distribution,linetype=Distribution)) + 
+      geom_line() + 
+      theme_bw()
   })
   
   
@@ -165,7 +173,9 @@ shinyServer(function(input,output,session) {
   })
   
   output$pois_m_plot = renderPlot({
-    ggplot(pois_m_data(), aes(x=x,y=y,color=Distribution)) + geom_line()
+    ggplot(pois_m_data(), aes(x=x,y=y,color=Distribution,linetype=Distribution)) + 
+      geom_line() + 
+      theme_bw()
   })
   
   ######################################################################
@@ -206,7 +216,9 @@ shinyServer(function(input,output,session) {
   })
   
   output$exp_m_plot = renderPlot({
-    ggplot(exp_m_data(), aes(x=x,y=y,color=Distribution)) + geom_line()
+    ggplot(exp_m_data(), aes(x=x,y=y,color=Distribution,linetype=Distribution)) + 
+      geom_line() + 
+      theme_bw()
   })
   
   
@@ -221,7 +233,9 @@ shinyServer(function(input,output,session) {
     x = exp_r_xx()
     data.frame("Distribution" = "prior",
                x = x,
-               y = dgamma(x, input$exp_r_a, input$exp_r_b))
+               y = dgamma(x, 
+                          shape = input$exp_r_a, 
+                          rate  = input$exp_r_b))
   })
   
   exp_r_like = reactive({
@@ -229,8 +243,8 @@ shinyServer(function(input,output,session) {
     data.frame("Distribution" = "likelihood",
                x = x,
                y = dgamma(x, 
-                             input$exp_r_n, 
-                             input$exp_r_n*input$exp_r_ybar))
+                          shape = input$exp_r_n, 
+                          rate  = input$exp_r_n*input$exp_r_ybar))
   })  
   
   exp_r_post = reactive({
@@ -238,8 +252,8 @@ shinyServer(function(input,output,session) {
     data.frame("Distribution" = "posterior",
                x = x,
                y = dgamma(x, 
-                             input$exp_r_a+input$exp_r_n, 
-                             input$exp_r_b+input$exp_r_n*input$exp_r_ybar))
+                          shape = input$exp_r_a+input$exp_r_n, 
+                          rate  = input$exp_r_b+input$exp_r_n*input$exp_r_ybar))
   })
   
   exp_r_data = reactive({
@@ -249,7 +263,9 @@ shinyServer(function(input,output,session) {
   })
   
   output$exp_r_plot = renderPlot({
-    ggplot(exp_r_data(), aes(x=x,y=y,color=Distribution)) + geom_line()
+    ggplot(exp_r_data(), aes(x=x,y=y,color=Distribution,linetype=Distribution)) + 
+      geom_line() + 
+      theme_bw()
   })
   
 })
