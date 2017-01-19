@@ -71,7 +71,7 @@ shinyServer(function(input,output,session) {
   
   norm_m_post = reactive({
     x = norm_m_xx()
-    vr = 1/input$norm_m_s^2 + input$norm_m_n/input$norm_m_sigma^2
+    vr = 1/(1/input$norm_m_s^2 + input$norm_m_n/input$norm_m_sigma^2)
     mn = vr*(input$norm_m_m/input$norm_m_s^2 + input$norm_m_n*input$norm_m_ybar/input$norm_m_sigma^2)
     data.frame("Distribution" = "posterior",
                x = x,
