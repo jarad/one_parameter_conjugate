@@ -1,5 +1,5 @@
-library(shiny)
-library(ggplot2)
+library("shiny")
+library("tidyverse")
 
 source("dinvgamma.R")
 
@@ -47,6 +47,53 @@ shinyServer(function(input,output,session) {
       geom_line() + 
       theme_bw()
   })
+  
+  
+  
+  ######################################################################
+  # Binomial (unknown n)
+  ######################################################################
+  
+  bin_n_xx = reactive({ seq(input$bin_n_min, input$bin_n_max, by=1) })
+  
+  bin_n_prior = reactive({
+    x = bin_n_xx()
+    data.frame("Distribution" = "prior",
+               x = x,
+               y = dpois(x, input$bin_n_mean))
+  })
+  
+  bin_n_like = reactive({
+    x = bin_n_xx()
+    data.frame("Distribution" = "likelihood",
+               x = x,
+               y = dbinom(input$bin_n_y, x, input$bin_n_p))
+  })  
+  
+  bin_n_post = reactive({
+    x = bin_n_xx()
+    data.frame("Distribution" = "posterior",
+               x = x,
+               y = dpois(x,  input$bin_n_mean) * dbinom(input$bin_n_y, x, input$bin_n_p)) %>%
+      mutate(y = y/sum(y))
+  })
+  
+  bin_n_data = reactive({
+    bind_rows(bin_n_prior(),
+          bin_n_like(),
+          bin_n_post())
+  })
+  
+  output$bin_n_plot = renderPlot({
+    ggplot(bin_n_data(), 
+           aes(x     = x,
+               y     = y,
+               color = Distribution,
+               shape = Distribution)) + 
+      geom_point() + 
+      theme_bw()
+  })
+  
   
   
   ######################################################################
@@ -153,7 +200,7 @@ shinyServer(function(input,output,session) {
     data.frame("Distribution" = "likelihood",
                x = x,
                y = dgamma(x, 
-                          input$pois_m_n*input$pois_m_ybar, 
+                          input$pois_m_n * input$pois_m_ybar, 
                           input$pois_m_n))
   })  
   
@@ -161,9 +208,9 @@ shinyServer(function(input,output,session) {
     x = pois_m_xx()
     data.frame("Distribution" = "posterior",
                x = x,
-               y = dinvgamma(x, 
-                             input$pois_m_a+input$pois_m_n*input$pois_m_ybar, 
-                             input$pois_m_b+input$pois_m_n))
+               y = dgamma(x, 
+                          input$pois_m_a + input$pois_m_n * input$pois_m_ybar, 
+                          input$pois_m_b + input$pois_m_n))
   })
   
   pois_m_data = reactive({

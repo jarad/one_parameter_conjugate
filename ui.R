@@ -29,7 +29,25 @@ shinyUI(navbarPage("Model:",
         )
       )
     ),
-    tabPanel("unknown n", includeMarkdown("under_construction.md"))
+    tabPanel("unknown n",
+             sidebarLayout(
+               sidebarPanel(
+                 helpText('Prior: Poisson'),
+                 numericInput('bin_n_mean', 'a', 1, 0),
+                 hr(),
+                 helpText('Data'),
+                 numericInput('bin_n_p', 'Probability of success:', 0.5, 0, 1),
+                 numericInput('bin_n_y', 'Total successes:',  3, 0),
+                 hr(),
+                 helpText('Plot x limits'),
+                 numericInput('bin_n_min', 'min', 0),
+                 numericInput('bin_n_max', 'max', 10)
+               ),
+               mainPanel(
+                 plotOutput("bin_n_plot")
+               )
+             )
+    )
   ),
   
   ####################################################
